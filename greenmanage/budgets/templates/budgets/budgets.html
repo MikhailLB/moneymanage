@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Бюджеты{% endblock %}
+
+{% block content %}
+<h2>Мои Бюджеты</h2>
+
+<!-- Форма поиска по категориям -->
+<form method="GET" class="form-inline mb-3">
+    <input type="text" name="category" class="form-control mr-sm-2" placeholder="Поиск по категории" value="{{ request.GET.category }}">
+    <p></p>
+    <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Поиск</button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                <a href="?sort_by=category&order={% if request.GET.sort_by == 'category' and request.GET.order == 'asc' %}desc{% else %}asc{% endif %}">
+                    Категория
+                    {% if request.GET.sort_by == 'category' %}
+                        {% if request.GET.order == 'asc' %}
+                            &#9650;
+                        {% else %}
+                            &#9660;
+                        {% endif %}
+                    {% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?sort_by=limit&order={% if request.GET.sort_by == 'limit' and request.GET.order == 'asc' %}desc{% else %}asc{% endif %}">
+                    Лимит
+                    {% if request.GET.sort_by == 'limit' %}
+                        {% if request.GET.order == 'asc' %}
+                            &#9650;
+                        {% else %}
+                            &#9660;
+                        {% endif %}
+                    {% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?sort_by=spent&order={% if request.GET.sort_by == 'spent' and request.GET.order == 'asc' %}desc{% else %}asc{% endif %}">
+                    Израсходовано
+                    {% if request.GET.sort_by == 'spent' %}
+                        {% if request.GET.order == 'asc' %}
+                            &#9650;
+                        {% else %}
+                            &#9660;
+                        {% endif %}
+                    {% endif %}
+                </a>
+            </th>
+            <th>Остаток</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for budget in budgets %}
+        <tr>
+            <td>{{ budget.category }}</td>
+            <td>{{ budget.limit }} USD</td>
+            <td><span style="color: Red">{{ budget.spent }} USD </span></td>
+           <td>
+                {% if budget.remainder|divide:budget.limit > 0.5 %}
+                    <span style="color: #17b817">{{ budget.remainder }} USD</span>
+                {% elif budget.remainder|divide:budget.limit <= 0.5 and budget.remainder > 0 %}
+                    <span style="color: #ff9100">{{ budget.remainder }} USD</span>
+                {% else %}
+                    <span style="color: #ff0000">{{ budget.remainder }} USD</span>
+                {% endif %}
+            </td>
+
+
+            <td>
+                <div style="display: inline-block;">
+                    <form method="POST" action="{% url 'update_limit' budget.id %}" style="display: inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary">Редактировать лимит</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}&category={{ request.GET.category }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        {% for p in paginator.page_range %}
+            {% if page_obj.number == p %}
+            <li class="page-item active">
+                <span class="page-link">{{ p }}</span>
+            </li>
+            {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ p }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}&category={{ request.GET.category }}">{{ p }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}&category={{ request.GET.category }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}
+

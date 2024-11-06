@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+{% block title %}Бюджеты{% endblock %}
+
+{% block content %}
+<h2>Мои Бюджеты</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Категория</th>
+            <th>Лимит</th>
+            <th>Израсходовано</th>
+            <th>Остаток</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for budget in budgets %}
+        <tr>
+            <td>{{ budget.category }}</td>
+
+            <td>
+                <!-- Форма для изменения лимита с идентификатором -->
+                <form method="POST" id="form-{{ budget.id }}" action="{% url 'update_limit' budget.id %}" style="display: inline-block;">
+                    {% csrf_token %}
+
+                    {% if budget.id == pk %}
+                    {{ form.limit|add_class:"form-control form-control-sm" }} <!-- Поле для изменения лимита -->
+                    {% else %}
+                    {{ budget.limit }}
+                    {% endif %}
+                </form>
+            </td>
+
+            <td>{{ budget.spent }} USD</td>
+            <td>{{ budget.remainder }} USD</td>
+
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Форма для удаления бюджета -->
+                    <form method="POST" action="{% url 'delete_budget' budget.id %}" style="display: inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Удалить
+                        </button>
+                    </form>
+
+                    <!-- Кнопка вне формы с атрибутом form для связи с формой -->
+                    <button type="submit" class="btn btn-sm btn-primary" form="form-{{ budget.id }}">
+                        Сохранить
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

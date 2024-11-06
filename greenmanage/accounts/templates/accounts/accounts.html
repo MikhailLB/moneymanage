@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Профиль пользователя</h2>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title">Личные данные</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Имя:</strong></div>
+                            <div class="col-8">{{ user.first_name }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Фамилия:</strong></div>
+                            <div class="col-8">{{ user.last_name }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Email:</strong></div>
+                            <div class="col-8">{{ user.email }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Валюта:</strong></div>
+                            <div class="col-8">{{ user.profile.currency }}</div>  <!-- Предполагается, что валюта хранится в профиле пользователя -->
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Дата регистрации:</strong></div>
+                            <div class="col-8">{{ user.date_joined }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong>Последний вход:</strong></div>
+                            <div class="col-8">{{ user.last_login }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="#" class="btn btn-warning">Редактировать профиль</a>
+        </div>
+    </div>
+{% endblock %}
+

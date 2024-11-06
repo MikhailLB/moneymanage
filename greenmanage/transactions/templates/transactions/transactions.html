@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+{% block title %}Транзакции{% endblock %}
+
+{% block content %}
+<h2>Мои Транзакции</h2>
+
+<!-- Форма для фильтрации и сортировки -->
+<form method="GET" action="." class="mb-3">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="category" placeholder="Фильтр по категории" class="form-control" value="{{ request.GET.category }}">
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="date" placeholder="Фильтр по дате" class="form-control" value="{{ request.GET.date }}">
+        </div>
+        <div class="col-md-3">
+            <select name="transaction_type" class="form-control">
+                <option value="">Все типы</option>
+                <option value="expense" {% if request.GET.transaction_type == 'expense' %}selected{% endif %}>Расход</option>
+                <option value="income" {% if request.GET.transaction_type == 'income' %}selected{% endif %}>Доход</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Применить фильтр</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>
+                <a href="?sort_by=date{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">Дата</a>
+            </th>
+            <th>
+                <a href="?sort_by=category{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">Категория</a>
+            </th>
+            <th>Описание</th>
+            <th>
+                <a href="?sort_by=transaction_type&&order={% if current_order == 'desc' %}asc{% else %}desc{% endif %}&{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">Тип транзакции</a>
+                {% if request.GET.sort_by == 'transaction_type' %}
+                        {% if request.GET.order == 'asc' %}
+                            &#9650;
+                        {% else %}
+                            &#9660;
+                        {% endif %}
+                    {% endif %}
+            </th>
+            <th>
+                <a href="?sort_by=amount&order={% if current_order == 'desc' %}asc{% else %}desc{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">Сумма</a>
+                {% if request.GET.sort_by == 'amount' %}
+                        {% if request.GET.order == 'asc' %}
+                            &#9650;
+                        {% else %}
+                            &#9660;
+                        {% endif %}
+                    {% endif %}
+            </th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+    <!-- Форма для добавления новой транзакции -->
+    {% if page_obj.number == 1 %}
+    <tr>
+        <form method="POST">
+            {% csrf_token %}
+            <td>
+                {% get_current_date %}
+            </td>
+            <td>
+                {{ form.new_category|add_class:"form-control form-control-sm" }}
+            </td>
+            <td>
+                {{ form.description|add_class:"form-control form-control-sm" }}
+            </td>
+            <td>
+                {{ form.transaction_type|add_class:"form-control form-control-sm" }}
+            </td>
+            <td>
+                {{ form.amount|add_class:"form-control form-control-sm" }}
+            </td>
+            {% if form.non_field_errors %}
+            <div class="errors">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            {% for field in form %}
+                {% if field.errors %}
+                    <div class="field-errors text-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <td>
+                <button type="submit" class="btn btn-sm btn-success">Сохранить</button>
+            </td>
+        </form>
+    </tr>
+    {% endif %}
+
+    <!-- Список транзакций -->
+    {% for transaction in transactions %}
+    <tr>
+        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.category.name }}</td> <!-- Обращение к имени категории -->
+        <td>{{ transaction.description }}</td>
+        <td>{% if transaction.transaction_type.name == 'income'%}Доход{% else %}Трата{% endif %}</td> <!-- Обращение к имени типа транзакции -->
+        <td>{% if transaction.transaction_type.name == 'income' %}<span style="color: #17b817";>+{{ transaction.amount }} USD </span>{% else %}  <span style="color: Red;">{{ transaction.amount }} USD</span>{% endif %}</td>
+        <td>
+            <form method="POST" action="{% url 'delete_transaction' transaction.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- Пагинация -->
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        <!-- Кнопка "Назад" -->
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        <!-- Номера страниц -->
+        {% for p in paginator.page_range %}
+            {% if page_obj.number == p %}
+            <li class="page-item active">
+                <span class="page-link">{{ p }}</span>
+            </li>
+            {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ p }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}{% if request.GET.transaction_type %}&transaction_type={{ request.GET.transaction_type}}{% endif %}">{{ p }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Кнопка "Вперед" -->
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}{% if request.GET.transaction_type %}&transaction_type={{ request.GET.transaction_type}}{% endif %}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

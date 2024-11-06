@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-container d-flex justify-content-center align-items-center">
+    <div class="login-box card shadow-sm p-4">
+        <h2 class="text-center mb-4">Вход в систему</h2>
+
+        <!-- Форма логина -->
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="mb-3">
+                <label for="username" class="form-label">Логин или Email</label>
+                <input type="text" class="form-control" id="username" name="username" required placeholder="Введите логин или email">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="password" name="password" required placeholder="Введите пароль">
+            </div>
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <a href="#" class="text-muted">Забыли пароль?</a>
+                <a href="{% url 'users:register' %}" class="text-muted">Нет аккаунта?</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .login-container {
+        min-height: 80vh;
+    }
+    .login-box {
+        width: 100%;
+        max-width: 400px;
+    }
+</style>
+{% endblock %}
