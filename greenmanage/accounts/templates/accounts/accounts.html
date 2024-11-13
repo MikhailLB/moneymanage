@@ -13,6 +13,10 @@
                     </div>
                     <div class="card-body">
                         <div class="row mb-3">
+                            <div class="col-4"><strong>Имя пользователя:</strong></div>
+                            <div class="col-8">{{ user.username }}</div> <!-- Уникальный username -->
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-4"><strong>Имя:</strong></div>
                             <div class="col-8">{{ user.first_name }}</div>
                         </div>
@@ -26,7 +30,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-4"><strong>Валюта:</strong></div>
-                            <div class="col-8">{{ user.profile.currency }}</div>  <!-- Предполагается, что валюта хранится в профиле пользователя -->
+                            <div class="col-8">{{ user.account.currency.code }}</div> <!-- Валюта профиля -->
                         </div>
                         <div class="row mb-3">
                             <div class="col-4"><strong>Дата регистрации:</strong></div>
@@ -42,8 +46,9 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="#" class="btn btn-warning">Редактировать профиль</a>
+            <a href="{% url 'accounts_update' user.id %}" class="btn btn-warning">Редактировать профиль</a>
         </div>
     </div>
 {% endblock %}
+
 

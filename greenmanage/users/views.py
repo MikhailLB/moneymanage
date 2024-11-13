@@ -1,11 +1,11 @@
 from django.contrib.auth import logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
-from .forms import LoginUserForm, RegisterUserForm
+from .forms import LoginUserForm, RegisterUserForm, UserPasswordChangeForm
 
 
 class LoginUser(LoginView):
@@ -26,7 +26,10 @@ class RegisterUser(CreateView):
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:login')
 
-
+class UserPasswordChange(PasswordChangeView):
+    form_class = UserPasswordChangeForm
+    template_name = 'users/password_change.html'
+    success_url = reverse_lazy('users:password-change-done')
 # def register(request):
 #     if request.method == 'POST':
 #         form = RegisterUserForm(request.POST)
