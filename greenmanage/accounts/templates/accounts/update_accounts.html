@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактировать профиль{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Редактировать профиль</h2>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="card-title">Обновить данные</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                    {% for field, errors in form.errors.items %}
+                                        <li>{{ field }}: {{ errors|join:", " }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                <a href="{% url 'accounts' %}" class="btn btn-secondary ms-2">Отмена</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
