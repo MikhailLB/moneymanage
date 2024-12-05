@@ -21,7 +21,7 @@ class UpdateProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Загружаем валюты из модели Currency
-        self.fields['currency'].choices = [(currency.pk, currency.code) for currency in Currency.objects.all()]
+        self.fields['currency'].choices = [(currency.pk, currency.name) for currency in Currency.objects.all()]
 
         # Проверка, что у пользователя есть account, и установка начального значения для currency
         if hasattr(self.instance, 'account') and self.instance.account:

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from urllib3 import request
 
 from accounts.models import Account
 from django.db.models.signals import post_save
@@ -7,6 +8,7 @@ from django.dispatch import receiver
 from django.db import models
 from budgets.models import Category, Budget
 from decimal import Decimal
+from currencies .models import Currency
 class Transaction(models.Model):
 
     account = models.ForeignKey(Account, on_delete=models.CASCADE, default=1)
@@ -15,6 +17,7 @@ class Transaction(models.Model):
     description = models.CharField(max_length=1023)
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     transaction_type = models.ForeignKey('TransactionsType', on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -38,7 +41,7 @@ def update_budget_on_transaction(sender, instance, created, **kwargs):
         amount = instance.amount
         transaction_type = instance.transaction_type
         user_id = instance.user_id
-
+        currency = instance.currency
         # Убедимся, что это не доход (income)
         if str(transaction_type) != 'income':
             # Создаем или обновляем бюджет для данной категории и пользователя
@@ -48,8 +51,9 @@ def update_budget_on_transaction(sender, instance, created, **kwargs):
                 defaults={'limit': Decimal('100.00'), 'spent': Decimal('0.00')}
             )
 
-            # Обновляем поле spent
-            budget.spent += abs(amount)  # Убедитесь, что сумма добавляется как положительная
+            currency_rate = Currency.objects.get(pk=currency.pk).exchange_rate
+            budget.spent += abs(amount / currency_rate)
+            print(currency_rate)
             budget.save()
 
 
@@ -59,16 +63,16 @@ def delete_budget_on_transaction(sender, instance, **kwargs):
     amount = instance.amount
     transaction_type = instance.transaction_type
     user_id = instance.user_id
-
+    currency = instance.currency
     # Проверяем, существует ли бюджет для данной категории и пользователя
     try:
         budget = Budget.objects.get(category=category, user_id=user_id)
 
-        # Если это не доход (income)
         if str(transaction_type) != 'income':
             # Проверяем, можем ли уменьшить значение spent
             if budget.spent - abs(amount) > 0:
-                budget.spent -= abs(amount)
+                currency_rate = Currency.objects.get(pk=currency.pk).exchange_rate
+                budget.spent -= abs(amount / currency_rate)
             else:
                 budget.spent = 0  # Если сумма уходит в минус, установим в 0
             budget.save()

@@ -1,9 +1,7 @@
-
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
-
 from accounts.forms import UpdateProfileForm
 from accounts.models import Account
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,9 +17,9 @@ class UpdateAccountView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         obj = get_object_or_404(get_user_model(), id=self.kwargs['pk'])
-        # Проверка: разрешать только владельцу профиля
         if obj != self.request.user:
             return HttpResponseForbidden("You are not allowed to edit this profile.")
+
         return obj
 
     def form_valid(self, form):

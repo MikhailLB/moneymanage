@@ -58,6 +58,7 @@
                     {% endif %}
             </th>
             <th>Действия</th>
+            <th>Сохранить</th>
         </tr>
     </thead>
     <tbody>
@@ -81,6 +82,9 @@
             <td>
                 {{ form.amount|add_class:"form-control form-control-sm" }}
             </td>
+            <td>
+                {{ form.currency|add_class:"form-control form-control-sm" }}
+            </td>
             {% if form.non_field_errors %}
             <div class="errors">
                 {{ form.non_field_errors }}
@@ -103,11 +107,11 @@
     <!-- Список транзакций -->
     {% for transaction in transactions %}
     <tr>
-        <td>{{ transaction.date }}</td>
+        <td class="transaction-date">{{ transaction.date }}</td>
         <td>{{ transaction.category.name }}</td> <!-- Обращение к имени категории -->
         <td>{{ transaction.description }}</td>
         <td>{% if transaction.transaction_type.name == 'income'%}Доход{% else %}Расход{% endif %}</td> <!-- Обращение к имени типа транзакции -->
-        <td>{% if transaction.transaction_type.name == 'income' %}<span style="color: #17b817";>+{{transaction.amount|multiply:curr_value}} {{curr_code}} </span>{% else %}  <span style="color: Red;">{{transaction.amount|multiply:curr_value}} {{curr_code}} </span>{% endif %}</td>
+        <td>{% if transaction.transaction_type.name == 'income' %}<span style="color: #17b817";>+{{transaction.amount}} {{transaction.currency.code}} </span>{% else %}  <span style="color: Red;">{{transaction.amount}} {{transaction.currency.code}} </span>{% endif %}</td>
         <td>
             <form method="POST" action="{% url 'delete_transaction' transaction.id %}">
                 {% csrf_token %}
@@ -162,5 +166,13 @@
         {% endif %}
     </ul>
 </nav>
+<style>
+    table {
+        table-layout: auto; 
+    }
+    .transaction-date {
+        white-space: nowrap;
+    }
+</style>
 
 {% endblock %}

@@ -28,7 +28,7 @@
                     {% if budget.id == pk %}
                     {{ form.limit|add_class:"form-control form-control-sm" }} <!-- Поле для изменения лимита -->
                     {% else %}
-                    {{ budget.limit }}
+                    {{ budget.limit }} {{curr_code}}
                     {% endif %}
                 </form>
             </td>

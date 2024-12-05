@@ -5,8 +5,11 @@ class CreateTransactionForm(forms.ModelForm):
     new_category = forms.CharField(max_length=100, required=False)
     class Meta:
         model = Transaction
-        fields = ['new_category', 'description', 'transaction_type', 'amount']
+        fields = ['new_category', 'description', 'transaction_type', 'amount', 'currency']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['currency'].initial = self.instance.account.currency_id
 
     def save(self, commit=True):
         transaction = super().save(commit=False)

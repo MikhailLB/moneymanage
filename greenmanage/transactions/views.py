@@ -55,8 +55,6 @@ class TransactionsListView(LoginRequiredMixin, FormMixin, ListView):
         context['transaction_type_filter'] = self.request.GET.get('transaction_type', '')
         context['sort_by'] = self.request.GET.get('sort_by', '')
         context['current_order'] = self.request.GET.get('order', 'desc')
-        context['curr_code'] = Account.objects.get(user=self.request.user).currency.code
-        context['curr_value'] = Currency.objects.get(code__iexact=context['curr_code']).exchange_rate
         return context
 
     def post(self, request, *args, **kwargs):
@@ -70,19 +68,21 @@ class TransactionsListView(LoginRequiredMixin, FormMixin, ListView):
             return self.form_invalid(form)
 
     def get_success_url(self):
-        return reverse('transactions')  # лучше использовать reverse для URL
+        return reverse('transactions')
 
     def form_valid(self, form):
         context = self.get_context_data()
-        transaction = form.save(commit=False)  # Не сохраняем сразу, чтобы изменить сумму
-        if transaction.transaction_type.name == 'income':  # Если тип "Приход"
-            transaction.amount = abs(transaction.amount)  # Убедимся, что сумма положительная
-        elif transaction.transaction_type.name == 'expense':  # Если тип "Траты"
-            transaction.amount = -abs(transaction.amount)  # Записываем сумму как отрицательную
-        print(transaction.amount, print(context['curr_value']))
-        transaction.amount = round(transaction.amount / context['curr_value'], 2)
+
+        transaction = form.save(commit=False)
+
+        if transaction.transaction_type.name == 'income':
+            transaction.amount = abs(transaction.amount)
+        elif transaction.transaction_type.name == 'expense':
+            transaction.amount = -abs(transaction.amount)
+
         transaction.user = self.request.user
-        transaction.save()  # Теперь сохраняем транзакцию в БД
+        transaction.save()
+
         return super().form_valid(form)
 
 

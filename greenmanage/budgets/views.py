@@ -73,6 +73,8 @@ class UpdateLimit(LoginRequiredMixin, UpdateView):
         )
         context['budgets'] = data
         context['pk'] = self.kwargs.get('pk')  # Передаем идентификатор текущего бюджета
+        context['curr_code'] = Account.objects.get(user=self.request.user).currency.code
+        context['curr_value'] = Currency.objects.get(code__iexact=context['curr_code']).exchange_rate
         return context
 
 class BudgetDeleteView(LoginRequiredMixin, DeleteView):

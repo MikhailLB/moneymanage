@@ -15,3 +15,25 @@ h2 {
 .btn-outline-secondary {
     margin-top: 20px;
 }
+
+.transactions-page {
+    max-width: 100%;
+    margin: auto;
+}
+
+.transactions-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.transactions-table th,
+.transactions-table td {
+    word-wrap: break-word;
+    white-space: nowrap;
+}
+
+.filter-form input,
+.filter-form select {
+    font-size: 14px;
+}
+
