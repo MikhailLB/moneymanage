@@ -27,5 +27,6 @@ urlpatterns = [
     path('', include('reminders.urls')),
     path('', include('reports.urls')),
     path('', include('transactions.urls')),
+    path('', include('temp_transactions.urls')),
     path('users/', include('users.urls', namespace="users")),
 ]

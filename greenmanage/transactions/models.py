@@ -53,7 +53,6 @@ def update_budget_on_transaction(sender, instance, created, **kwargs):
 
             currency_rate = Currency.objects.get(pk=currency.pk).exchange_rate
             budget.spent += abs(amount / currency_rate)
-            print(currency_rate)
             budget.save()
 
 

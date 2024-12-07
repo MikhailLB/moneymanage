@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}{{ form.instance.id|default:"Создание" }} регулярного платежа{% endblock %}
+{% load form_filters %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">
+        {% if form.instance.id %}
+            Редактировать регулярный платеж
+        {% else %}
+            Создать регулярный платеж
+        {% endif %}
+    </h2>
+    <form method="POST" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+            <!-- Категория -->
+            <div class="col-md-6">
+                <label for="id_new_category" class="form-label">Категория</label>
+                {{ form.new_category}}
+                {% if form.category.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.category.errors|join:" " }}
+                    </div>
+                {% endif %}
+            </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+                <label for="id_description" class="form-label">Описание</label>
+                {{ form.description}}
+                {% if form.category.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.description.errors|join:" " }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="id_transaction_type" class="form-label">Тип транзакции</label>
+                {{ form.transaction_type}}
+                {% if form.transaction_type.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.transaction_type.errors|join:" " }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Сумма -->
+            <div class="col-md-6">
+                <label for="id_amount" class="form-label">Сумма</label>
+                {{ form.amount}}
+                {% if form.amount.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.amount.errors|join:" " }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Валюта -->
+            <div class="col-md-6">
+                <label for="id_currency" class="form-label">Валюта</label>
+                {{ form.currency}}
+                {% if form.currency.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.currency.errors|join:" " }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Периодичность -->
+            <div class="col-md-6">
+                <label for="id_frequency" class="form-label">Периодичность</label>
+                {{ form.frequency}}
+                {% if form.frequency.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.frequency.errors|join:" " }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+        <!-- Кнопки -->
+        <div class="mt-4 text-end">
+            <a href="#" class="btn btn-secondary me-2">Отмена</a>
+            <button type="submit" class="btn btn-primary">
+                {% if form.instance.id %}
+                    Сохранить изменения
+                {% else %}
+                    Создать платеж
+                {% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

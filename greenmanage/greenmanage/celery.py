@@ -9,12 +9,14 @@ app = Celery('greenmanage')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
-
 app.conf.beat_schedule = {
     'check-rates-every-hour': {
         'task': 'currencies.tasks.get_beat_currencies',
+        'schedule': crontab(hour='*/1')
+    },
+    'check_auto_payments': {
+        'task': 'temp_transactions.tasks.process_auto_payments',
         'schedule': crontab(minute='*/1')
-    }
+    },
 }
-
 

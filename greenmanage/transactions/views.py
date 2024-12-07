@@ -10,7 +10,6 @@ from django.views.generic.edit import FormMixin, DeleteView
 from currencies.models import Currency
 from .forms import *
 from .models import Transaction
-
 class TransactionsListView(LoginRequiredMixin, FormMixin, ListView):
     model = Transaction
     form_class = CreateTransactionForm
@@ -23,6 +22,7 @@ class TransactionsListView(LoginRequiredMixin, FormMixin, ListView):
         queryset = queryset.filter(user=self.request.user)
         order = self.request.GET.get('order', 'desc')  # по умолчанию сортировка по убыванию
         sort_by = self.request.GET.get('sort_by')  # параметр сортировки
+
         # Проверка, нужно ли сортировать
         if sort_by in ['amount', 'date', 'category', 'transaction_type']:
             if order == 'asc':

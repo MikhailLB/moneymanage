@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'reminders.apps.RemindersConfig',
     'reports.apps.ReportsConfig',
     'transactions.apps.TransactionsConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'temp_transactions.apps.TempTransactionsConfig',
 ]
 
 MIDDLEWARE = [

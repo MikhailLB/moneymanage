@@ -38,7 +38,6 @@ class UpdateProfileForm(forms.ModelForm):
         if not hasattr(user, 'account') or user.account is None:
             raise ValidationError("Account profile does not exist for this user.")
 
-        # Обновляем currency в существующем account
 
         currency_code = self.cleaned_data['currency']
         user.account.currency = Currency.objects.get(pk=currency_code)
