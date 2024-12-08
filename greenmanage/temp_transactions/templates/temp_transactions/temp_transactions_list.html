@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Регулярные платежи{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<h2>Мои Регулярные Платежи</h2>
+
+<div class="mb-3 text-end">
+    <a href="{% url 'temp_transactions' %}" class="btn btn-secondary w-100">+ Добавить регулярный платеж</a>
+</div>
+
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Дата добавления</th>
+            <th>Дата срабатывания</th>
+            <th>Через сколько сработает</th>
+            <th>Категория</th>
+            <th>Описание</th>
+            <th>Тип транзакции</th>
+            <th>Сумма</th>
+            <th>Валюта</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for transaction in transactions %}
+    <tr>
+        <td class="transaction-date">{{ transaction.created_at }}</td> <!-- Дата добавления -->
+        <td class="transaction-date">{{ transaction.target_date }}</td>
+        <td class="transaction-date">{{ transaction.rest|humanize_timedelta }}</td>
+        <td>{{ transaction.category }}</td> <!-- Категория -->
+        <td>{{ transaction.description }}</td> <!-- Описание -->
+        <td>{% if transaction.transaction_type.name == 'income' %}Доход{% else %}Расход{% endif %}</td> <!-- Тип транзакции -->
+        <td>
+            {% if transaction.transaction_type.name == 'income' %}
+                <span style="color: #17b817;">+{{ transaction.amount }} {{ transaction.currency.code }}</span>
+            {% else %}
+                <span style="color: red;">{{ transaction.amount }} {{ transaction.currency.code }}</span>
+            {% endif %}
+        </td>
+        <td>{{ transaction.currency.code }}</td> <!-- Валюта -->
+        <td class="d-flex">
+            <!-- Кнопка редактировать -->
+            <a href="{% url 'update_temp_transaction' transaction.id %}" class="btn btn-sm btn-warning me-1">Редактировать</a>
+
+            <!-- Кнопка удалить -->
+            <form method="POST" action="{% url 'delete_temp_transaction' transaction.id %}" class="d-inline-block" >
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- Пагинация -->
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        {% for p in paginator.page_range %}
+            {% if page_obj.number == p %}
+            <li class="page-item active">
+                <span class="page-link">{{ p }}</span>
+            </li>
+            {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<style>
+    table {
+        table-layout: auto; 
+    }
+    .transaction-date {
+        white-space: nowrap;
+    }
+</style>
+
+{% endblock %}

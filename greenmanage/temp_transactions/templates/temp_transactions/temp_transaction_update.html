@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Регулярные платежи{% endblock %}
+{% load custom_filters %}
+{% load form_filters %}
+{% block content %}
+<h2>Мои Регулярные Платежи</h2>
+
+<div class="mb-3 text-end">
+    <a href="{% url 'temp_transactions' %}" class="btn btn-secondary w-100">+ Добавить регулярный платеж</a>
+</div>
+
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Дата добавления</th>
+            <th>Дата срабатывания</th>
+            <th>Через сколько сработает</th>
+            <th>Категория</th>
+            <th>Описание</th>
+            <th>Тип транзакции</th>
+            <th>Сумма</th>
+            <th>Валюта</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="transaction-date">{{ transaction.created_at}}</td> <!-- Дата добавления -->
+        <td class="transaction-date">{{ transaction.target_date }}</td>
+        <td class="transaction-date">{{ rest|humanize_timedelta}}</td>
+
+        <form method="POST" id="form-{{ transaction.id }}" style="display: inline-block;">
+            {% csrf_token %}
+            <td>{{ form.category|add_class:"form-control form-control-sm" }}</td>
+            <td>{{ form.description|add_class:"form-control form-control-sm" }}</td>
+            <td>{{ form.transaction_type|add_class:"form-control form-control-sm" }}</td>
+            <td>{{ form.amount|add_class:"form-control form-control-sm" }}</td>
+            <td>{{ form.currency|add_class:"form-control form-control-sm" }}</td>
+            <td><button type="submit" class="btn btn-sm btn-primary">Сохранить</button></td>
+        </form>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Пагинация -->
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        {% for p in paginator.page_range %}
+            {% if page_obj.number == p %}
+            <li class="page-item active">
+                <span class="page-link">{{ p }}</span>
+            </li>
+            {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+<style>
+    table {
+        table-layout: auto;
+    }
+    .transaction-date {
+        white-space: nowrap;
+    }
+</style>
+
+{% endblock %}

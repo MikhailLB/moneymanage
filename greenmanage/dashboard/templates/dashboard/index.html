@@ -1,8 +1,5 @@
-<!-- templates/dashboard/index.html -->
 {% extends 'base.html' %}
-{% load custom_filters %}
 {% block title %}Главная{% endblock %}
-
 {% block content %}
 <h2 class="text-center mb-4">Мой Финансовый Дашборд</h2>
 
@@ -11,7 +8,7 @@
         <div class="card text-white bg-primary mb-3">
             <div class="card-body">
                 <h5 class="card-title">Доходы</h5>
-                <p class="card-text">Общая сумма: {{ income.amount__sum|multiply:curr_value}} {{curr_code}} </p>
+                <p class="card-text">Общая сумма: {{ income }} {{curr_code}} </p>
                 <a href="{% url 'transactions' %}?category=&date=&transaction_type=income" class="btn btn-light">Посмотреть</a>
             </div>
         </div>
@@ -20,7 +17,7 @@
         <div class="card text-white bg-success mb-3">
             <div class="card-body">
                 <h5 class="card-title">Расходы</h5>
-                <p class="card-text">Общая сумма: {{ spent.spent__sum|multiply:curr_value}} {{curr_code}}</p>
+                <p class="card-text">Общая сумма: {{ expense }} {{curr_code}}</p>
                 <a href="{% url 'transactions' %}?category=&date=&transaction_type=expense" class="btn btn-light">Посмотреть</a>
             </div>
         </div>
@@ -29,7 +26,7 @@
         <div class="card text-white bg-warning mb-3">
             <div class="card-body">
                 <h5 class="card-title">Бюджет</h5>
-                <p class="card-text">Осталось: {{ last_budget.remainder__sum|multiply:curr_value}} {{curr_code}}</p>
+                <p class="card-text">Осталось: {{ budget }} {{curr_code}}</p>
                 <a href="{% url 'budgets' %}" class="btn btn-light">Посмотреть</a>
             </div>
         </div>

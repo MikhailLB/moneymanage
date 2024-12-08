@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, date
+
 from django.forms import ModelForm, TextInput, Select
 from django import forms
 
@@ -42,7 +44,14 @@ class TempTransactionForm(ModelForm):
         if new_category_name:
             category, created = Category.objects.get_or_create(name=new_category_name)
             transaction.category = category
-
+        if transaction.frequency.name == 'daily':
+            transaction.target_date = datetime.today() + timedelta(days=1)
+        elif transaction.frequency.name == 'weekly':
+            transaction.target_date = datetime.today() + timedelta(weeks=1)
+        elif transaction.frequency.name == 'monthly':
+            transaction.target_date = datetime.today() + timedelta(days=30)
+            transaction.save()
         if commit:
             transaction.save()
+
         return transaction

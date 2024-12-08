@@ -1,31 +1,8 @@
-<!-- templates/reminders.html -->
-{% extends 'base.html' %}
-
-{% block title %}Напоминания{% endblock %}
-
-{% block content %}
-<h2>Мои Напоминания</h2>
-
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Дата</th>
-            <th>Описание</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>2024-09-30</td>
-            <td>Оплатить кредит</td>
-            <td>
-                <button class="btn btn-sm btn-warning">Редактировать</button>
-                <button class="btn btn-sm btn-danger">Удалить</button>
-            </td>
-        </tr>
-        <!-- Пример данных -->
-    </tbody>
-</table>
-
-<button class="btn btn-primary">Добавить новое напоминание</button>
-{% endblock %}
+{% for reminder in reminders %}
+    <a class="dropdown-item {% if not notification.is_read %}fw-bold{% endif %}" href="#">
+        {{ reminder.message }}
+        <small class="text-muted d-block">{{ reminders.created_at|date:"d M, H:i" }}</small>
+    </a>
+{% empty %}
+    <span class="dropdown-item text-muted">Нет уведомлений</span>
+{% endfor %}

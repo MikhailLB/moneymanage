@@ -15,3 +15,10 @@ def divide(value, divisor):
         return value / divisor
     except (ValueError, ZeroDivisionError):
         return 0
+
+@register.filter(name='round_number')
+def round_number(value, decimal_places=0):
+    try:
+        return round(float(value), int(decimal_places))
+    except (ValueError, TypeError):
+        return value

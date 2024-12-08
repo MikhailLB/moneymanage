@@ -1,6 +1,5 @@
 from celery import shared_task
 from datetime import datetime, timedelta, date
-
 from accounts.models import Account
 from budgets.models import Category
 from transactions.models import Transaction
@@ -11,7 +10,6 @@ from .models import TempTransaction
 def process_auto_payments():
     transactions = TempTransaction.objects.all()
     today = date.today()
-
 
     for transaction in transactions:
         should_process = False
@@ -47,10 +45,14 @@ def process_auto_payments():
                 transaction_type = transaction.transaction_type,
                 currency=transaction.currency
             )
+            if transaction.frequency.name == 'daily':
+                transaction.target_date = datetime.today() + timedelta(days=1)
+            elif transaction.frequency.name == 'weekly':
+                transaction.target_date = datetime.today() + timedelta(weeks=1)
+            elif transaction.frequency.name == 'monthly':
+                transaction.target_date = datetime.today() + timedelta(days=30)
+                transaction.save()
             transaction.last_processed = today
-        else:
-            transaction.last_processed = last_processed
-
         transaction.save()
 
     return "Successfully add transactions"

@@ -6,6 +6,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, ListView, UpdateView
 
+from dashboard.services import budget_remainder
+from reminders.tasks import budget_overrun
 from accounts.models import Account
 from currencies.models import Currency
 from .models import Budget
@@ -47,13 +49,14 @@ class BudgetListView(LoginRequiredMixin, ListView):
 
         # Добавляем поле remainder
         queryset = queryset.annotate(
-            remainder=ExpressionWrapper(F('limit') - F('spent'), output_field=DecimalField())
+            remainder=ExpressionWrapper((F('limit') - F('spent')), output_field=DecimalField())
         )
+
         return queryset
-        #return Budget.objects.all().annotate(remainder=F('limit')+F('spent'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        queryset = super().get_queryset()
         context['curr_code'] = Account.objects.get(user=self.request.user).currency.code
         context['curr_value'] = Currency.objects.get(code__iexact=context['curr_code']).exchange_rate
         return context

@@ -5,9 +5,11 @@
 {% block content %}
 <h2>Мои Транзакции</h2>
 
-<div class="mb-3 text-end">
-    <a href="{% url 'temp_transactions' %}" class="btn btn-secondary w-100">+ Добавить регулярный платеж</a>
+<div class="mb-3 d-flex justify-content-between">
+    <a href="{% url 'temp_transactions_list' %}" class="btn btn-secondary me-2 w-50">Мои регулярные платежи</a>
+    <a href="{% url 'temp_transactions' %}" class="btn btn-secondary w-50">+ Добавить регулярный платеж</a>
 </div>
+
 <form method="GET" action="." class="mb-3">
     <div class="row g-3">
         <div class="col-md-3">
