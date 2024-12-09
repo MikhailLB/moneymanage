@@ -13,7 +13,8 @@ class CreateTransactionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        user = self.initial.get('user_id')
+        self.fields['currency'].initial = Account.objects.get(user_id=user).currency
 
     def save(self, commit=True):
         transaction = super().save(commit=False)
@@ -21,7 +22,7 @@ class CreateTransactionForm(forms.ModelForm):
         if new_category_name:
             category, created = Category.objects.get_or_create(name=new_category_name)
             transaction.category = category
-
+        transaction.account = Account.objects.get(user_id=self.initial.get('user_id'))
         if commit:
             transaction.save()
         return transaction

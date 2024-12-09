@@ -11,7 +11,7 @@ from decimal import Decimal
 from currencies .models import Currency
 class Transaction(models.Model):
 
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=1)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.CharField(max_length=1023)

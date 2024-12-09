@@ -67,6 +67,10 @@ class TransactionsListView(LoginRequiredMixin, FormMixin, ListView):
     def get_success_url(self):
         return reverse('transactions')
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['user_id'] = self.request.user.id
+        return initial
     def form_valid(self, form):
         context = self.get_context_data()
 

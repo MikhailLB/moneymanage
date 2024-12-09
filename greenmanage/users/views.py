@@ -18,9 +18,6 @@ class LoginUser(LoginView):
     success_url = reverse_lazy('dashboard')
 
     def get_success_url(self):
-        if not Account.objects.filter(user=self.request.user).exists():
-            account = Account.objects.create(user=self.request.user, name=self.request.user.first_name)
-            account.save()
         return reverse_lazy('dashboard')
 
 
