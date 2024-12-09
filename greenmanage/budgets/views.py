@@ -52,11 +52,14 @@ class BudgetListView(LoginRequiredMixin, ListView):
             remainder=ExpressionWrapper((F('limit') - F('spent')), output_field=DecimalField())
         )
 
+        overdraft = queryset.filter(remainder__lte=0)
+        if overdraft:
+            for budget in overdraft:
+                budget_overrun(user=self.request.user, category=budget.category, limit=budget.limit, spent=budget.spent, id=budget.pk)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        queryset = super().get_queryset()
         context['curr_code'] = Account.objects.get(user=self.request.user).currency.code
         context['curr_value'] = Currency.objects.get(code__iexact=context['curr_code']).exchange_rate
         return context

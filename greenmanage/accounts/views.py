@@ -6,6 +6,7 @@ from accounts.forms import UpdateProfileForm
 from accounts.models import Account
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
+
 def main(request):
     return render(request, 'accounts/accounts.html')
 

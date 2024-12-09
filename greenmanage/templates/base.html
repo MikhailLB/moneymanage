@@ -37,10 +37,9 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
-                     {% include 'reminders/reminders.html' %}
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{% url 'reminders' %}">
                             <i class="fas fa-bell"></i>
                             {% if unread_notifications > 0 %}
                                 <span class="badge bg-danger">{{ unread_notifications }}</span>

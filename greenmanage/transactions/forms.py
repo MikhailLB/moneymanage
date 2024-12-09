@@ -1,4 +1,8 @@
+from locale import currency
+
 from django import forms
+
+from accounts.models import Account
 from .models import Transaction, Category, TransactionsType  # убедись, что импортируешь нужные модели
 
 class CreateTransactionForm(forms.ModelForm):
@@ -9,7 +13,7 @@ class CreateTransactionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['currency'].initial = self.instance.account.currency_id
+
 
     def save(self, commit=True):
         transaction = super().save(commit=False)

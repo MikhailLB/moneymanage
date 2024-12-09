@@ -1,6 +1,4 @@
 from numpy.ma.core import around
-
-from accounts .models import Account
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -64,7 +62,6 @@ class TransactionsListView(LoginRequiredMixin, FormMixin, ListView):
         if form.is_valid():
             return self.form_valid(form)
         else:
-            print(form.errors)
             return self.form_invalid(form)
 
     def get_success_url(self):

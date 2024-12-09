@@ -2,6 +2,7 @@ from celery import shared_task
 from datetime import datetime, timedelta, date
 from accounts.models import Account
 from budgets.models import Category
+from reminders.tasks import regular_pay_notification
 from transactions.models import Transaction
 from .models import TempTransaction
 
@@ -45,6 +46,7 @@ def process_auto_payments():
                 transaction_type = transaction.transaction_type,
                 currency=transaction.currency
             )
+            regular_pay_notification(category=transaction.category, amount=transaction.amount, user=transaction.user, currency=transaction.currency.code)
             if transaction.frequency.name == 'daily':
                 transaction.target_date = datetime.today() + timedelta(days=1)
             elif transaction.frequency.name == 'weekly':
