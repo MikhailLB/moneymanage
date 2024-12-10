@@ -1,18 +1,40 @@
-<!-- templates/reports.html -->
 {% extends 'base.html' %}
 
-{% block title %}Расходы по дням{% endblock %}
+{% block title %}Экспорт данных{% endblock %}
 
 {% block content %}
-    <h1 class="text-center">Расходы по дням</h1>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    {{ graph|safe }}
-                </div>
+<div class="container">
+    <h1 class="mt-4">Экспорт данных</h1>
+    <p>Выберите период для экспорта данных из базы в файл Excel.</p>
+
+    <form method="get" action="{% url 'reports' %}">
+        <div class="row">
+            <div class="col-md-5">
+                <label for="start_date" class="form-label">Дата начала</label>
+                <input type="date" id="start_date" name="start_date" class="form-control" required>
+            </div>
+            <div class="col-md-5">
+                <label for="end_date" class="form-label">Дата окончания</label>
+                <input type="date" id="end_date" name="end_date" class="form-control" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary mt-2 w-100">Экспорт</button>
             </div>
         </div>
-    </div>
+    </form>
+
+    {% if export_success %}
+        <div class="alert alert-success mt-4" role="alert">
+            Данные успешно экспортированы!
+        </div>
+    {% endif %}
+
+    {% if export_error %}
+        <div class="alert alert-danger mt-4" role="alert">
+            Произошла ошибка при экспорте данных.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
+
 
