@@ -32,6 +32,12 @@ def change_password_notification(user):
 
 @shared_task
 def forgot_password_notification(user):
-    description = f"Вы успешно восстановиди пароль!"
+    description = f"Вы успешно восстановили пароль!"
+    obj = Reminders.objects.create(user=user, description=description, is_completed=False)
+    obj.save()
+
+@shared_task
+def download_statistics(user):
+    description = f"Таблица транзакций скачана в формате excel!"
     obj = Reminders.objects.create(user=user, description=description, is_completed=False)
     obj.save()
