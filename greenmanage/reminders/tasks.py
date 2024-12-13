@@ -10,8 +10,9 @@ from .models import Reminders
 def budget_overrun(user,category,limit, spent, id):
     if not Reminders.objects.filter(budget_id=id).exists():
         currency = Account.objects.get(user=user).currency.code
+        exchange_rate = Account.objects.get(user=user).currency.exchange_rate
         amount = limit - spent
-        description = f"Вы превысили бюджет в категории {str(category).lower()} на {amount} {currency}!"
+        description = f"Вы превысили бюджет в категории {str(category).lower()} на {round(amount * exchange_rate, 2) } {currency}!"
         obj = Reminders.objects.create(user=user, description=description, is_completed=False, budget_id=id)
         obj.save()
         return "Уведомление об превышении бюджета добавлено!"

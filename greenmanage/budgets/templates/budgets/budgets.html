@@ -59,15 +59,15 @@
         {% for budget in budgets %}
         <tr>
             <td>{{ budget.category }}</td>
-            <td>{{budget.limit}} {{curr_code}}</td>
-            <td><span style="color: Red">{{budget.spent}} {{curr_code}}</span></td>
+            <td>{{budget.limit|multiply:curr_value}} {{curr_code}}</td>
+            <td><span style="color: Red">{{budget.spent|multiply:curr_value}} {{curr_code}}</span></td>
            <td>
                 {% if budget.remainder|divide:budget.limit > 0.5 %}
-                    <span style="color: #17b817">{{budget.remainder|round_number:2}} {{curr_code}}</span>
+                    <span style="color: #17b817">{{budget.remainder|round_number:2|multiply:curr_value}} {{curr_code}}</span>
                 {% elif budget.remainder|divide:budget.limit <= 0.5 and budget.remainder > 0 %}
-                    <span style="color: #ff9100">{{budget.remainder|round_number:2}} {{curr_code}}</span>
+                    <span style="color: #ff9100">{{budget.remainder|round_number:2|multiply:curr_value}} {{curr_code}}</span>
                 {% else %}
-                    <span style="color: #ff0000">{{budget.remainder|round_number:2}} {{curr_code}}</span>
+                    <span style="color: #ff0000">{{budget.remainder|round_number:2|multiply:curr_value}} {{curr_code}}</span>
                 {% endif %}
             </td>
 
