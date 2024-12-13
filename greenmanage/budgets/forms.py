@@ -6,3 +6,4 @@ class AddLimitForm(forms.ModelForm):
     class Meta:
         fields = ['limit']
 
+

@@ -35,21 +35,19 @@
 
             <td>{{budget.spent|multiply:curr_value}} {{curr_code}}</td>
             <td>{{budget.remainder|multiply:curr_value}} {{curr_code}}</td>
-
             <td>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <!-- Форма для удаления бюджета -->
                     <form method="POST" action="{% url 'delete_budget' budget.id %}" style="display: inline-block;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-danger">
                             Удалить
                         </button>
                     </form>
-
-                    <!-- Кнопка вне формы с атрибутом form для связи с формой -->
+                    {% if budget.id == pk %}
                     <button type="submit" class="btn btn-sm btn-primary" form="form-{{ budget.id }}">
                         Сохранить
                     </button>
+                    {% endif %}
                 </div>
             </td>
         </tr>
