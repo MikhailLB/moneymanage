@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  web:
+    image: greenmanage_app
+    build: .
+    container_name: greenmanage_web
+    command: ["gunicorn", "greenmanage.wsgi:application", "--bind", "0.0.0.0:8000"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
+      - CELERY_BROKER_URL=amqp://rabbitmq
+      - CELERY_RESULT_BACKEND=rpc://
+    networks:
+      - greenmanage_network
+
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: greenmanage_rabbitmq
+    ports:
+      - "5672:5672"      # RabbitMQ port
+      - "15672:15672"    # RabbitMQ management interface
+    networks:
+      - greenmanage_network
+
+  celery:
+    build: .
+    container_name: greenmanage_celery
+    command: celery -A greenmanage.celery worker --loglevel=info -P gevent
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq
+      - CELERY_RESULT_BACKEND=rpc://
+    networks:
+      - greenmanage_network
+
+  celery-beat:
+    build: .
+    container_name: greenmanage_celery_beat
+    command: celery -A greenmanage.celery beat --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq
+      - CELERY_RESULT_BACKEND=rpc://
+    networks:
+      - greenmanage_network
+
+networks:
+  greenmanage_network:
+    driver: bridge

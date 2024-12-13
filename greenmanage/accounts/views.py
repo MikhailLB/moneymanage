@@ -1,13 +1,14 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from accounts.forms import UpdateProfileForm
-from accounts.models import Account
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
 
-def main(request):
+@login_required
+def account_profile(request):
     return render(request, 'accounts/accounts.html')
 
 

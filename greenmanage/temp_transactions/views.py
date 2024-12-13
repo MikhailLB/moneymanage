@@ -18,11 +18,11 @@ class CreateTempTransaction(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
-        initial['user_id'] = self.request.user.id  # Передаём user_id в начальные данные
+        initial['user_id'] = self.request.user.id
         return initial
 
     def form_valid(self, form):
-        form.instance.user = self.request.user  # Привязываем пользователя
+        form.instance.user = self.request.user
         return super().form_valid(form)
 
 

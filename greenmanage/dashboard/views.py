@@ -1,12 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, F
 from django.shortcuts import render
 from .services import sum_amount, spent_amount, budget_remainder
 from accounts.models import Account
-from budgets.models import Budget
 from currencies.models import Currency
-from transactions.models import Transaction
-from reminders.models import Reminders
 
 
 

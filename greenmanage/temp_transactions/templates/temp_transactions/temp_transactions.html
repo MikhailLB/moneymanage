@@ -80,7 +80,7 @@
 
         <!-- Кнопки -->
         <div class="mt-4 text-end">
-            <a href="#" class="btn btn-secondary me-2">Отмена</a>
+            <a href="{% url 'temp_transactions_list'%}" class="btn btn-secondary me-2">Отмена</a>
             <button type="submit" class="btn btn-primary">
                 {% if form.instance.id %}
                     Сохранить изменения

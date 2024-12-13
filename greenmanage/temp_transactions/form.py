@@ -10,9 +10,12 @@ from temp_transactions.models import TempTransaction, Frequency
 
 class TempTransactionForm(ModelForm):
     new_category = forms.CharField(max_length=100, required=True,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = TempTransaction
+
         fields = ['description', 'frequency', 'new_category', 'transaction_type', 'currency', 'amount']
+
         widgets = {
             'description': TextInput(attrs={'class': 'form-control'}),
             'new_category': TextInput(attrs={'class': 'form-control'}),
@@ -21,6 +24,7 @@ class TempTransactionForm(ModelForm):
             'currency': Select(attrs={'class': 'form-control'}),  # Виджет для выбора валюты
             'frequency': Select(attrs={'class': 'form-control'}),  # Виджет для выбора частоты
         }
+
         labels = {
             'description': 'Описание',
             'frequency': 'Переодичность снятия/зачисления средств',
@@ -32,6 +36,7 @@ class TempTransactionForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         user = self.initial.get('user_id')
         account = Account.objects.get(user=user)
         self.fields['currency'].initial = account.currency_id
@@ -44,13 +49,17 @@ class TempTransactionForm(ModelForm):
         if new_category_name:
             category, created = Category.objects.get_or_create(name=new_category_name)
             transaction.category = category
+
         if transaction.frequency.name == 'daily':
             transaction.target_date = datetime.today() + timedelta(days=1)
+
         elif transaction.frequency.name == 'weekly':
             transaction.target_date = datetime.today() + timedelta(weeks=1)
+
         elif transaction.frequency.name == 'monthly':
             transaction.target_date = datetime.today() + timedelta(days=30)
             transaction.save()
+
         if commit:
             transaction.save()
 

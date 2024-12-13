@@ -1,16 +1,19 @@
-from tkinter.font import names
-
-from django.contrib.auth import get_user_model
 from django.db import models
+from openpyxl.styles.builtins import currency
+
 from currencies.models import Currency
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+
+from currencies.tasks import get_beat_currencies
+
+
 class Account(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='account')
     name = models.CharField(max_length=128)
     balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    currency = models.ForeignKey(Currency, on_delete=models.CASCADE, default=5)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

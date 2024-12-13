@@ -20,6 +20,7 @@ class Budget(models.Model):
         indexes = [
             models.Index(fields=['-created_at'])
         ]
+
 class Category(models.Model):
     name = models.CharField(max_length=128)
 

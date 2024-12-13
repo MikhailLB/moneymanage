@@ -7,52 +7,86 @@
     <div class="login-box card shadow-sm p-4">
         <h2 class="text-center mb-4">Регистрация</h2>
 
-        <!-- Форма регистрации -->
         <form method="POST">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
 
-            <!-- Логин -->
             <div class="mb-3">
                 <label for="username" class="form-label">Логин</label>
                 <input type="text" class="form-control" id="username" name="username" required placeholder="Введите логин">
+                 {% if form.username.errors %}
+                    <div class="text-danger">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Имя -->
             <div class="mb-3">
                 <label for="first_name" class="form-label">Имя</label>
                 <input type="text" class="form-control" id="first_name" name="first_name" required placeholder="Введите ваше имя">
+                {% if form.first_name.errors %}
+                    <div class="text-danger">
+                        {% for error in form.first_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
-            <!-- Фамилия -->
             <div class="mb-3">
                 <label for="last_name" class="form-label">Фамилия</label>
                 <input type="text" class="form-control" id="last_name" name="last_name" required placeholder="Введите вашу фамилию">
+                {% if form.last_name.errors %}
+                    <div class="text-danger">
+                        {% for error in form.last_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- E-mail -->
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="email" class="form-control" id="email" name="email" required placeholder="Введите ваш email">
+                {% if form.email.errors %}
+                    <div class="text-danger">
+                        {% for error in form.email.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Пароль -->
             <div class="mb-3">
                 <label for="password1" class="form-label">Пароль</label>
                 <input type="password" class="form-control" id="password1" name="password1" required placeholder="Введите пароль">
+                {% if form.password1.errors %}
+                    <div class="text-danger">
+                        {% for error in form.password1.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Подтверждение пароля -->
             <div class="mb-3">
                 <label for="password2" class="form-label">Подтвердите пароль</label>
                 <input type="password" class="form-control" id="password2" name="password2" required placeholder="Повторите пароль">
+                {% if form.password2.errors %}
+                    <div class="text-danger">
+                        {% for error in form.password2.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
-            {% if form.non_field_errors %}
-            <div class="alert alert-danger" role="alert">
-                {{ form.non_field_errors }}
-            </div>
-            {% endif %}
 
             <div class="d-flex justify-content-between align-items-center">
                 <button type="submit" class="btn btn-primary">Зарегистрироваться</button>

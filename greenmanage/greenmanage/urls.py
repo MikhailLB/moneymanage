@@ -18,12 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 app_name = 'users'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dashboard.urls')),
     path('', include('accounts.urls')),
     path('', include('budgets.urls')),
-    path('', include('currencies.urls')),
     path('', include('reminders.urls')),
     path('', include('reports.urls')),
     path('', include('transactions.urls')),

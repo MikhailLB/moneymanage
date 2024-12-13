@@ -1,10 +1,15 @@
-FROM python:3
+FROM python:3.10-slim
 
-WORKDIR /project
+WORKDIR /app
 
-COPY requirements.txt /project/
+COPY requirements.txt /app/
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /project/
+COPY . /app/
+
+RUN python manage.py migrate
+
 EXPOSE 8000
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+CMD ["gunicorn", "greenmanage.wsgi:application", "--bind", "0.0.0.0:8000"]

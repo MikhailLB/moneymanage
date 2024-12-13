@@ -17,10 +17,6 @@ class NotificationsListView(LoginRequiredMixin, ListView):
         query_set = query_set.filter(user=self.request.user).order_by('-date')
         return query_set
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['unread_notifications'] = Reminders.objects.filter(user=self.request.user).count()
-    #     return context
 @login_required
 def delete_reminder(request, pk):
     reminder = get_object_or_404(Reminders, pk=pk, user=request.user)

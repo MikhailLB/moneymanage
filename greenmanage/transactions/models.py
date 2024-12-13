@@ -1,16 +1,11 @@
 from django.contrib.auth import get_user_model
-from urllib3 import request
+from django.db import models
 
 from accounts.models import Account
-from django.db.models.signals import post_save
-from django.db.models.signals import post_delete
-from django.dispatch import receiver
-from django.db import models
 from budgets.models import Category, Budget
-from decimal import Decimal
 from currencies .models import Currency
-class Transaction(models.Model):
 
+class Transaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -34,50 +29,6 @@ class Transaction(models.Model):
         ]
 
 
-@receiver(post_save, sender=Transaction)
-def update_budget_on_transaction(sender, instance, created, **kwargs):
-    if created:
-        category = instance.category
-        amount = instance.amount
-        transaction_type = instance.transaction_type
-        user_id = instance.user_id
-        currency = instance.currency
-        # Убедимся, что это не доход (income)
-        if str(transaction_type) != 'income':
-            # Создаем или обновляем бюджет для данной категории и пользователя
-            budget, created_budget = Budget.objects.get_or_create(
-                category=category,
-                user_id=user_id,  # Убедитесь, что бюджет уникален для пользователя
-                defaults={'limit': Decimal('100.00'), 'spent': Decimal('0.00')}
-            )
-
-            currency_rate = Currency.objects.get(pk=currency.pk).exchange_rate
-            budget.spent += abs(amount / currency_rate)
-            budget.save()
-
-
-@receiver(post_delete, sender=Transaction)
-def delete_budget_on_transaction(sender, instance, **kwargs):
-    category = instance.category
-    amount = instance.amount
-    transaction_type = instance.transaction_type
-    user_id = instance.user_id
-    currency = instance.currency
-    # Проверяем, существует ли бюджет для данной категории и пользователя
-    try:
-        budget = Budget.objects.get(category=category, user_id=user_id)
-
-        if str(transaction_type) != 'income':
-            # Проверяем, можем ли уменьшить значение spent
-            if budget.spent - abs(amount) > 0:
-                currency_rate = Currency.objects.get(pk=currency.pk).exchange_rate
-                budget.spent -= abs(amount / currency_rate)
-            else:
-                budget.spent = 0  # Если сумма уходит в минус, установим в 0
-            budget.save()
-
-    except Budget.DoesNotExist:
-        pass
 class TransactionsType(models.Model):
     name = models.CharField(max_length=255)
     verbose_name = models.CharField(max_length=255)

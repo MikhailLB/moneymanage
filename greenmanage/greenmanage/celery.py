@@ -12,7 +12,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'check-rates-every-hour': {
         'task': 'currencies.tasks.get_beat_currencies',
-        'schedule': crontab(hour='*/1')
+        'schedule': crontab(minute=0, hour='*/1')
     },
     'check_auto_payments': {
         'task': 'temp_transactions.tasks.process_auto_payments',
